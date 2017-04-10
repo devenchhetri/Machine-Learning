@@ -1,3 +1,5 @@
+#this is the implementation of k nearest neighbor algorithm using scikit learn library (neighbors.KNeighborsClassifier())
+
 #data is breast cancer data available at uci.edu
 import numpy as np                                                                  #importing required packages and modules
 import pandas as pd
