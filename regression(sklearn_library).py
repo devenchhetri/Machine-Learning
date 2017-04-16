@@ -1,10 +1,10 @@
 #data is google stocks data available freely at quandl.com
 #data is directly imported from quandl
 
-import math, quandl, datetime, pickle                                                       #importing required packages and modules
+import math, quandl, datetime                                                               #importing required packages and modules
 import pandas as pd
 import numpy as np
-from sklearn import preprocessing, svm
+from sklearn import preprocessing
 from sklearn.linear_model import LinearRegression
 from sklearn.model_selection import train_test_split
 import matplotlib.pyplot as plt
@@ -21,10 +21,9 @@ data['day_change'] = (data['Adj. Close'] - data['Adj. Open']) / data['Adj. Close
 data = data[['Adj. Close', 'high_low_diff', 'day_change', 'Adj. Volume']]                   #keeping specific features in the data for processing/training
 data.fillna(-99999, inplace=True)                                                           #replace missing values with -99999(outlier)
 
-forecast = int(math.ceil(0.005*len(data)))                                                  #forecast var stores 0.5% of the length of total data which is used later
+forecast = int(math.ceil(0.005*len(data)))                                                  #forecast stores 0.5% of the length of total data which is used later
 
 data['label'] = data['Adj. Close'].shift(-forecast)                                         #choosing label as Adj Close field, but after 16 days, by shifting,ie.after 0.5% of the length of total data
-
 
 X = np.array(data.drop(['label'], 1))                                                       #defining X value as all the fields except label field and converting to numpy array
 X = preprocessing.scale(X)                                                                  #scaling X
@@ -44,18 +43,18 @@ accuracy = classifier.score(X_test, y_test)                                     
 forecast_new = classifier.predict(X_new)                                                    #predicting lable for X value for which there were no labels
 print(forecast_new, accuracy, forecast)
 
-data['Forecast'] = np.nan
+data['Forecast'] = np.nan                                                                   #adding a new feature/column to store predicted value (assigning nan for now)
 
-last_date = data.iloc[-1].name
-last_unix = last_date.timestamp()
-next_unix = last_unix + 86400
+last_date = data.iloc[-1].name                                                              #last_date will store date of the last item in dataset(data)
+last_unix = last_date.timestamp()                                                           #taking timestamp
+next_unix = last_unix + 86400                                                               #hard coding to increment by 1 day
 
 for i in forecast_new:
-    next_date = datetime.datetime.fromtimestamp(next_unix)
+    next_date = datetime.datetime.fromtimestamp(next_unix)                                  #converting to date from timestamp
     next_unix += 86400
-    data.loc[next_date] = [np.nan for _ in range(len(data.columns)-1)] +[i]
+    data.loc[next_date] = [np.nan for _ in range(len(data.columns)-1)] +[i]                 #setting all columns to nan, except forecast which will hold predicted values
 
-data['Adj. Close'].plot()
+data['Adj. Close'].plot()                                                                   #plotting Adj Close values and forecasted values with matplotlib
 data['Forecast'].plot()
 plt.legend(loc=4)
 plt.xlabel('Date')
