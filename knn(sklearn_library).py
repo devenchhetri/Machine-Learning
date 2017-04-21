@@ -4,7 +4,7 @@
 import numpy as np                                                                  #importing required packages and modules
 import pandas as pd
 from sklearn.model_selection import train_test_split
-from sklearn import preprocessing, neighbors
+from sklearn import neighbors
 
 data = pd.read_csv('breast-cancer-wisconsin.data.txt')
 
